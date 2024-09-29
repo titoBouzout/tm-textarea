@@ -334,9 +334,6 @@ function untrack(fn) {
     Listener = listener;
   }
 }
-function onMount(fn) {
-  createEffect(() => untrack(fn));
-}
 function onCleanup(fn) {
   if (Owner === null);
   else if (Owner.cleanups === null) Owner.cleanups = [fn];
@@ -5707,9 +5704,7 @@ function createTmTextarea(styles) {
       return `rgba(98, 114, 164, ${opacity})`;
     });
     const style = when(() => config.style, (style2) => splitProps(style2, ["width", "height"])[1]);
-    onMount(() => new ResizeObserver(([entry]) => setViewport(entry?.contentRect)).observe(container));
     createRenderEffect(() => setSource(props.value));
-    createRenderEffect(() => console.log(theme()?.getForegroundColor()));
     return createComponent(TmTextareaContext.Provider, {
       get value() {
         return {
@@ -5753,6 +5748,7 @@ function createTmTextarea(styles) {
         });
         use((element) => {
           container = element;
+          new ResizeObserver(([entry]) => setViewport(entry?.contentRect)).observe(container);
           applyStyle(element, props, "width");
           applyStyle(element, props, "height");
         }, _el$2);
